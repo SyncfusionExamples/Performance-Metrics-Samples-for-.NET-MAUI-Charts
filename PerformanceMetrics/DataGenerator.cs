@@ -1,11 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Text;
 
 namespace PerformanceMetrics
 {
+    public class Model
+    {
+        public double XValue { get; set; }
+        public double YValue { get; set; }
+    }
+
     public class DataGenerator : INotifyPropertyChanged
     {
         public DateTime StartTime { get; set; }
