@@ -205,7 +205,8 @@
                         <!-- UI responsiveness -->
                         <Border Grid.Row="2" Grid.Column="1" Padding="11" MinimumHeightRequest="76" BackgroundColor="#F3F7FC" Stroke="#CEDAE8" StrokeShape="RoundRectangle 10" StrokeThickness="1">
                             <VerticalStackLayout Spacing="5">
-                                <Label Text="UI Response (avg frame time)" FontSize="11" TextColor="#5F6B7A" />
+                                <Label Text="UI Response During Zoom" FontSize="11" TextColor="#5F6B7A" />
+                                <Label Text="Average frame time" FontSize="9" TextColor="#7A8491" />
                                 <Label Text="{Binding UiResponseResult}" FontSize="17"  FontAttributes="Bold" TextColor="#202124" LineBreakMode="TailTruncation" />
                             </VerticalStackLayout>
                         </Border>

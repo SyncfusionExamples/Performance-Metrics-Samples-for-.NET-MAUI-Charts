@@ -14,7 +14,6 @@ public sealed class BenchmarkViewModel : INotifyPropertyChanged
     private const int SeriesCount = 10;
     private const int PanStepCount = 30;
     private const int ZoomCycleCount = 5;
-    private const int DelayAfterLoadMilliseconds = 1200;
     private const int RealTimeDurationMilliseconds = 2000;
     private const int RealTimeIntervalMilliseconds = 20;
 
@@ -255,8 +254,9 @@ public sealed class BenchmarkViewModel : INotifyPropertyChanged
             MemoryResult = $"{initialMeasurement.MemoryDifferenceMegabytes:F1} MB";
 
             Status = $"Chart loaded in {initialMeasurement.ElapsedMilliseconds:F0} ms. Starting interaction tests...";
-            await Task.Delay(DelayAfterLoadMilliseconds, cancellationToken);
+            await chartHost.WaitForRenderFrameAsync(cancellationToken);
 
+            await chartHost.WaitForRenderFrameAsync(cancellationToken);
             double trackballMilliseconds = await chartHost.MeasureTrackballAsync(cancellationToken);
 
             double panMilliseconds = await RunPanBenchmarkAsync(cancellationToken);
