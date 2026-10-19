@@ -240,8 +240,6 @@ public sealed class BenchmarkViewModel : INotifyPropertyChanged
 
             ResetMetrics();
 
-            Status = "Generating selected dataset...";
-
             GenerateDataset();
 
             cancellationToken.ThrowIfCancellationRequested();
@@ -256,19 +254,12 @@ public sealed class BenchmarkViewModel : INotifyPropertyChanged
 
             MemoryResult = $"{initialMeasurement.MemoryDifferenceMegabytes:F1} MB";
 
-            Status = $"Loaded {DatasetInformation}. Starting interaction tests...";
-
+            Status = $"Chart loaded in {initialMeasurement.ElapsedMilliseconds:F0} ms. Starting interaction tests...";
             await Task.Delay(DelayAfterLoadMilliseconds, cancellationToken);
-
-            Status = "Measuring trackball response...";
 
             double trackballMilliseconds = await chartHost.MeasureTrackballAsync(cancellationToken);
 
-            Status = "Measuring pan / scroll performance...";
-
             double panMilliseconds = await RunPanBenchmarkAsync(cancellationToken);
-
-            Status = "Measuring zoom performance...";
 
             // The WPF sample clears its frame history before Zoom.
             // Therefore MAUI UI Response also represents Zoom timing.
@@ -277,8 +268,6 @@ public sealed class BenchmarkViewModel : INotifyPropertyChanged
             double zoomMilliseconds = await RunZoomBenchmarkAsync(cancellationToken);
 
             FrameMeasurement frameMeasurement = chartHost.EndFrameCollection();
-
-            Status = "Measuring real-time update throughput...";
 
             RealTimeMeasurement realTimeMeasurement = await RunRealTimeBenchmarkAsync(cancellationToken);
 

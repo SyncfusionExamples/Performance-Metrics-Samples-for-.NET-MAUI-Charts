@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-
-namespace PerformanceMetricsSample
+﻿namespace PerformanceMetricsSample
 {
     public partial class App : Application
     {

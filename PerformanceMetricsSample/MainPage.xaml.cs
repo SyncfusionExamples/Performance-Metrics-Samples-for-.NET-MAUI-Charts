@@ -86,6 +86,11 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
     /// </summary>
     private bool isFrameCollectionActive;
 
+    /// <summary>
+    /// Empty data source used when clearing all chart series.
+    /// </summary>
+    private static readonly IReadOnlyList<Model> EmptyItemsSource = Array.Empty<Model>();
+
 #if ANDROID
     /// <summary>
     /// Continuously records Android Choreographer frame timestamps.
@@ -118,19 +123,11 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
 #endif
 
     /// <summary>
-    /// Gets the page ViewModel.
-    /// </summary>
-    public BenchmarkViewModel ViewModel { get; }
-
-    /// <summary>
     /// Initializes the ViewModel and subscribes to chart events.
     /// </summary>
     public MainPage()
     {
         InitializeComponent();
-
-        ViewModel = new BenchmarkViewModel();
-        BindingContext = ViewModel;
 
         // Give the ViewModel access to chart operations through the interface.
         ViewModel.Initialize(this);
@@ -351,7 +348,7 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
 #if ANDROID
         androidFrameMonitor = new AndroidContinuousFrameCallback(this);
 
-        Choreographer.Instance.PostFrameCallback(androidFrameMonitor);
+        Choreographer.Instance?.PostFrameCallback(androidFrameMonitor);
 
 #elif WINDOWS
         previousWindowsRenderingTime = null;
@@ -419,16 +416,16 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
         StopFrameCollection();
         CancelPendingOperations();
 
-        benchmarkSeries1.ItemsSource = null;
-        benchmarkSeries2.ItemsSource = null;
-        benchmarkSeries3.ItemsSource = null;
-        benchmarkSeries4.ItemsSource = null;
-        benchmarkSeries5.ItemsSource = null;
-        benchmarkSeries6.ItemsSource = null;
-        benchmarkSeries7.ItemsSource = null;
-        benchmarkSeries8.ItemsSource = null;
-        benchmarkSeries9.ItemsSource = null;
-        benchmarkSeries10.ItemsSource = null;
+        benchmarkSeries1.ItemsSource = EmptyItemsSource;
+        benchmarkSeries2.ItemsSource = EmptyItemsSource;
+        benchmarkSeries3.ItemsSource = EmptyItemsSource;
+        benchmarkSeries4.ItemsSource = EmptyItemsSource;
+        benchmarkSeries5.ItemsSource = EmptyItemsSource;
+        benchmarkSeries6.ItemsSource = EmptyItemsSource;
+        benchmarkSeries7.ItemsSource = EmptyItemsSource;
+        benchmarkSeries8.ItemsSource = EmptyItemsSource;
+        benchmarkSeries9.ItemsSource = EmptyItemsSource;
+        benchmarkSeries10.ItemsSource = EmptyItemsSource;
 
         renderedSeries.Clear();
 
@@ -549,7 +546,7 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
 
         AndroidSingleFrameCallback callback = new(source, registration);
 
-        Choreographer.Instance.PostFrameCallback(callback);
+        Choreographer.Instance?.PostFrameCallback(callback);
 
         return source.Task;
 
@@ -639,7 +636,7 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
 #if ANDROID
         if (androidFrameMonitor != null)
         {
-            Choreographer.Instance.RemoveFrameCallback(androidFrameMonitor);
+            Choreographer.Instance?.RemoveFrameCallback(androidFrameMonitor);
 
             androidFrameMonitor = null;
         }
@@ -849,7 +846,7 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
 
             if (page.isFrameCollectionActive)
             {
-                Choreographer.Instance.PostFrameCallback(this);
+                Choreographer.Instance?.PostFrameCallback(this);
             }
         }
     }

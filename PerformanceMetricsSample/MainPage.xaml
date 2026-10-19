@@ -10,6 +10,9 @@
     <ScrollView Orientation="Vertical" VerticalScrollBarVisibility="Default">
 
         <Grid Padding="10" RowSpacing="12">
+            <Grid.BindingContext>
+                <local:BenchmarkViewModel x:Name="ViewModel"/>
+            </Grid.BindingContext>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -136,14 +139,6 @@
                         <!-- Series 10 -->
                         <local:FastLineSeriesExt x:Name="benchmarkSeries10" XBindingPath="XValue" YBindingPath="YValue" EnableAntiAliasing="False" />
                     </chart:SfCartesianChart>
-
-                    <!-- Loading overlay -->
-                    <Grid IsVisible="{Binding IsBenchmarkRunning}" BackgroundColor="#55000000" InputTransparent="False" ZIndex="10">
-                        <VerticalStackLayout Spacing="8" HorizontalOptions="Center" VerticalOptions="Center">
-                            <ActivityIndicator IsRunning="{Binding IsBenchmarkRunning}" WidthRequest="44" HeightRequest="44" Color="#E5864B" HorizontalOptions="Center" />
-                            <Label Text="{Binding Status}" MaximumWidthRequest="260"  FontSize="12" FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Center" LineBreakMode="WordWrap" />
-                        </VerticalStackLayout>
-                    </Grid>
                 </Grid>
             </Border>
 
