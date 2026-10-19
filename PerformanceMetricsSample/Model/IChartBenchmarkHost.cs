@@ -9,39 +9,27 @@ public interface IChartBenchmarkHost
     /// Loads all generated datasets and measures initial rendering
     /// and managed-memory usage.
     /// </summary>
-    Task<InitialRenderMeasurement> LoadAndRenderAsync(
-        IReadOnlyList<IReadOnlyList<Model>> datasets,
-        int expectedSeriesCount,
-        int expectedPointCountPerSeries,
-        CancellationToken cancellationToken);
+    Task<InitialRenderMeasurement> LoadAndRenderAsync(IReadOnlyList<IReadOnlyList<Model>> datasets, int expectedSeriesCount, int expectedPointCountPerSeries, CancellationToken cancellationToken);
 
     /// <summary>
     /// Measures the programmatic Trackball response time.
     /// </summary>
-    Task<double> MeasureTrackballAsync(
-        CancellationToken cancellationToken);
+    Task<double> MeasureTrackballAsync(CancellationToken cancellationToken);
 
     /// <summary>
     /// Waits for the next platform display frame.
     /// </summary>
-    Task WaitForRenderFrameAsync(
-        CancellationToken cancellationToken);
+    Task WaitForRenderFrameAsync(CancellationToken cancellationToken);
 
     /// <summary>
     /// Applies one horizontal Pan operation.
     /// </summary>
-    Task ApplyPanAsync(
-        double zoomFactor,
-        double zoomPosition,
-        CancellationToken cancellationToken);
+    Task ApplyPanAsync(double zoomFactor, double zoomPosition, CancellationToken cancellationToken);
 
     /// <summary>
     /// Applies one Zoom operation to the chart.
     /// </summary>
-    Task ApplyZoomAsync(
-        double zoomFactor,
-        double zoomPosition,
-        CancellationToken cancellationToken);
+    Task ApplyZoomAsync(double zoomFactor, double zoomPosition, CancellationToken cancellationToken);
 
     /// <summary>
     /// Starts continuous frame-interval collection.

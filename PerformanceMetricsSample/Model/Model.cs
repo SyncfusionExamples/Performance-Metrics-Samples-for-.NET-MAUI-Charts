@@ -60,17 +60,12 @@ public sealed class InitialRenderMeasurement
     /// <summary>
     /// Gets the positive managed-memory difference in bytes.
     /// </summary>
-    public long MemoryDifferenceBytes =>
-    Math.Max(
-    0,
-    MemoryAfterBytes - MemoryBeforeBytes);
+    public long MemoryDifferenceBytes => Math.Max(0, MemoryAfterBytes - MemoryBeforeBytes);
 
     /// <summary>
     /// Gets the managed-memory difference in megabytes.
     /// </summary>
-    public double MemoryDifferenceMegabytes =>
-    MemoryDifferenceBytes /
-    (1024.0 * 1024.0);
+    public double MemoryDifferenceMegabytes => MemoryDifferenceBytes / (1024.0 * 1024.0);
 }
 
 /// <summary>

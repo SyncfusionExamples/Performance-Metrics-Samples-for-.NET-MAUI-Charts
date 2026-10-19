@@ -8,28 +8,19 @@ public sealed class AsyncCommand : ICommand
     private readonly Func<bool>? canExecute;
     private bool isExecuting;
 
-    public AsyncCommand(
-        Func<Task> execute,
-        Func<bool>? canExecute = null)
+    public AsyncCommand(Func<Task> execute, Func<bool>? canExecute = null)
     {
-        this.execute =
-            execute ??
-            throw new ArgumentNullException(
-                nameof(execute));
+        this.execute = execute ?? throw new ArgumentNullException(nameof(execute));
 
-        this.canExecute =
-            canExecute;
+        this.canExecute = canExecute;
     }
 
-    public bool CanExecute(
-        object? parameter)
+    public bool CanExecute(object? parameter)
     {
-        return !isExecuting &&
-               (canExecute?.Invoke() ?? true);
+        return !isExecuting && (canExecute?.Invoke() ?? true);
     }
 
-    public async void Execute(
-        object? parameter)
+    public async void Execute(object? parameter)
     {
         if (!CanExecute(parameter))
         {
@@ -54,8 +45,6 @@ public sealed class AsyncCommand : ICommand
 
     public void RaiseCanExecuteChanged()
     {
-        CanExecuteChanged?.Invoke(
-            this,
-            EventArgs.Empty);
+        CanExecuteChanged?.Invoke(this, EventArgs.Empty);
     }
 }

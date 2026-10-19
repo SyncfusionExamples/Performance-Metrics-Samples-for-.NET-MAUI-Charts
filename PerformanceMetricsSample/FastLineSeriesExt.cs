@@ -1,6 +1,6 @@
 ﻿using Syncfusion.Maui.Charts;
-
 using System.Collections.ObjectModel;
+
 namespace PerformanceMetricsSample;
 
 /// <summary>
