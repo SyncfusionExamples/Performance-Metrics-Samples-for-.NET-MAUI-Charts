@@ -92,7 +92,6 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
     /// Handles continuous Windows rendering events.
     /// </summary>
     private EventHandler<object>? windowsRenderingHandler;
-
     /// <summary>
     /// Stores the previous Windows rendering timestamp.
     /// </summary>
@@ -104,7 +103,6 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
     /// Continuously receives iOS or Mac Catalyst display-refresh callbacks.
     /// </summary>
     private CADisplayLink? appleFrameDisplayLink;
-
     /// <summary>
     /// Stores the previous Apple display-link timestamp.
     /// </summary>
@@ -120,7 +118,6 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
 
         // Give the ViewModel access to chart operations through the interface.
         ViewModel.Initialize(this);
-
         // Monitor rendering completion for all ten series.
         benchmarkSeries1.RenderCompleted += OnSeriesRenderCompleted;
         benchmarkSeries2.RenderCompleted += OnSeriesRenderCompleted;
@@ -132,7 +129,6 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
         benchmarkSeries8.RenderCompleted += OnSeriesRenderCompleted;
         benchmarkSeries9.RenderCompleted += OnSeriesRenderCompleted;
         benchmarkSeries10.RenderCompleted += OnSeriesRenderCompleted;
-
         // Used by the programmatic trackball response test.
         chart.TrackballCreated += OnTrackballCreated;
     }
@@ -149,31 +145,22 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
     public async Task<InitialRenderMeasurement> LoadAndRenderAsync(IReadOnlyList<IReadOnlyList<Model>> datasets, int expectedSeriesCount, int expectedPointCountPerSeries, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-
         ValidateDatasets(datasets, expectedSeriesCount, expectedPointCountPerSeries);
-
         // ClearChart resets the expected values, so it must run first.
         ClearChart();
-
         this.expectedSeriesCount = expectedSeriesCount;
         this.expectedPointCountPerSeries = expectedPointCountPerSeries;
-
         // Wait until the removal of the old data reaches a display frame.
         await WaitForRenderFrameAsync(cancellationToken);
-
         // Match the managed-memory preparation used by the WPF benchmark.
         GC.Collect();
         GC.WaitForPendingFinalizers();
         GC.Collect();
-
         long memoryBefore = GC.GetTotalMemory(true);
-
         renderedSeries.Clear();
-
         // OnSeriesRenderCompleted completes this task after all ten
         // unique series have rendered with the expected point count.
         initialRenderCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-
         // Initial-render timing starts immediately before assigning data.
         Stopwatch stopwatch = Stopwatch.StartNew();
         AssignSeriesItemsSources(datasets);
@@ -226,7 +213,6 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
 
         int middleIndex = points.Count / 2;
         double middleXValue = points[middleIndex].XValue;
-
         float xPosition = chart.ValueToPoint(xAxis, middleXValue);
         float yPosition = (float)Math.Max(1, chart.Height / 2);
 
@@ -247,9 +233,7 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
         }
 
         stopwatch.Stop();
-
         trackballBehavior.Hide();
-
         return created ? stopwatch.Elapsed.TotalMilliseconds : 0;
     }
 
@@ -273,7 +257,6 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
     public Task ApplyPanAsync(double zoomFactor, double zoomPosition, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-
         double factor = Math.Clamp(zoomFactor, 0.001, 1.0);
         double maximumPosition = 1.0 - factor;
         xAxis.ZoomFactor = factor;
@@ -291,10 +274,8 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
     public Task ApplyZoomAsync(double zoomFactor, double zoomPosition, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-
         double factor = Math.Clamp(zoomFactor, 0.001, 1.0);
         double maximumPosition = 1.0 - factor;
-
         xAxis.ZoomFactor = factor;
         xAxis.ZoomPosition = Math.Clamp(zoomPosition, 0, maximumPosition);
         yAxis.ZoomFactor = factor;
@@ -375,10 +356,8 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
     {
         xAxis.ZoomFactor = 1;
         xAxis.ZoomPosition = 0;
-
         yAxis.ZoomFactor = 1;
         yAxis.ZoomPosition = 0;
-
         trackballBehavior.Hide();
     }
 
@@ -529,15 +508,12 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
         });
 
         CompositionTarget.Rendering += handler;
-
         return source.Task;
 
 #elif IOS || MACCATALYST
         TaskCompletionSource<bool> source = new(TaskCreationOptions.RunContinuationsAsynchronously);
-
         CADisplayLink? displayLink = null;
         CancellationTokenRegistration registration = default;
-
         displayLink = CADisplayLink.Create(() =>
         {
             displayLink?.Invalidate();
@@ -554,7 +530,6 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
                 displayLink?.Invalidate();
                 displayLink?.Dispose();
                 displayLink = null;
-
                 source.TrySetCanceled(cancellationToken);
             });
         });
@@ -713,10 +688,8 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
     {
         initialRenderCompletionSource?.TrySetCanceled();
         trackballCompletionSource?.TrySetCanceled();
-
         initialRenderCompletionSource = null;
         trackballCompletionSource = null;
-
         renderedSeries.Clear();
     }
 
@@ -749,7 +722,6 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
         public void DoFrame(long frameTimeNanos)
         {
             registration.Dispose();
-
             source.TrySetResult(true);
         }
     }

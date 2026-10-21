@@ -54,9 +54,7 @@ public sealed class BenchmarkViewModel : INotifyPropertyChanged
         };
 
         StartBenchmarkCommand = new AsyncCommand(RunBenchmarkAsync, () => chartHost != null && !IsBenchmarkRunning);
-
         ClearCommand = new RelayCommand(Clear);
-
         UpdateDatasetInformation();
     }
 
@@ -64,24 +62,20 @@ public sealed class BenchmarkViewModel : INotifyPropertyChanged
     /// Gets the available points-per-series values.
     /// </summary>
     public ObservableCollection<string> DataSizeOptions { get; }
-
     /// <summary>
     /// Gets the command that starts the benchmark.
     /// </summary>
     public ICommand StartBenchmarkCommand { get; }
-
     /// <summary>
     /// Gets the command that cancels and clears the benchmark.
     /// </summary>
     public ICommand ClearCommand { get; }
-
     /// <summary>
     /// Gets or sets the selected points-per-series value.
     /// </summary>
     public string SelectedDataSize
     {
         get => selectedDataSize;
-
         set
         {
             string newValue = string.IsNullOrWhiteSpace(value) ? "5K" : value;
@@ -133,7 +127,6 @@ public sealed class BenchmarkViewModel : INotifyPropertyChanged
     public bool IsBenchmarkRunning
     {
         get => isBenchmarkRunning;
-
         private set
         {
             if (!SetProperty(ref isBenchmarkRunning, value))
@@ -500,9 +493,7 @@ public sealed class BenchmarkViewModel : INotifyPropertyChanged
         }
 
         field = value;
-
         OnPropertyChanged(propertyName);
-
         return true;
     }
 

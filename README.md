@@ -199,4 +199,4 @@ Use a `NumericalAxis` or `DateTimeAxis` when the data is numeric or time-based. 
 
 ### Path Too Long Exception
 
-If a path-too-long exception occurs while building the sample, close the IDE, move or rename the repository to a shorter path, reopen the project, and rebuild it.
+If you are facing a "Path too long" exception when building this example project, close Visual Studio and rename the repository to a shorter name before building the project.
