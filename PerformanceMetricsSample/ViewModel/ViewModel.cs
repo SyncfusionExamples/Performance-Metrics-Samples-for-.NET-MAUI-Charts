@@ -22,7 +22,6 @@ public sealed class BenchmarkViewModel : INotifyPropertyChanged
     private IChartBenchmarkHost? chartHost;
     private CancellationTokenSource? cancellationSource;
     private Random random = new(7);
-
     private string selectedDataSize = "5K";
     private string datasetInformation = string.Empty;
     private string status = "Ready.";
@@ -93,11 +92,9 @@ public sealed class BenchmarkViewModel : INotifyPropertyChanged
             }
 
             selectedDataSize = newValue;
-
             OnPropertyChanged();
             OnPropertyChanged(nameof(SelectedDataCount));
             OnPropertyChanged(nameof(TotalDataCount));
-
             UpdateDatasetInformation();
         }
     }
@@ -211,7 +208,6 @@ public sealed class BenchmarkViewModel : INotifyPropertyChanged
     public void Initialize(IChartBenchmarkHost host)
     {
         chartHost = host ?? throw new ArgumentNullException(nameof(host));
-
         RaiseCommandStates();
     }
 
@@ -227,62 +223,39 @@ public sealed class BenchmarkViewModel : INotifyPropertyChanged
 
         cancellationSource?.Cancel();
         cancellationSource?.Dispose();
-
         CancellationTokenSource currentSource = new();
         cancellationSource = currentSource;
-
         CancellationToken cancellationToken = currentSource.Token;
 
         try
         {
             IsBenchmarkRunning = true;
-
             ResetMetrics();
-
             GenerateDataset();
-
             cancellationToken.ThrowIfCancellationRequested();
-
             IReadOnlyList<IReadOnlyList<Model>> readOnlyDatasets = datasets.Select(collection => (IReadOnlyList<Model>)collection).ToList();
-
             Status = "Measuring initial render...";
-
             InitialRenderMeasurement initialMeasurement = await chartHost.LoadAndRenderAsync(readOnlyDatasets, SeriesCount, SelectedDataCount, cancellationToken);
-
             InitialRenderResult = $"{initialMeasurement.ElapsedMilliseconds:F0} ms";
-
             MemoryResult = $"{initialMeasurement.MemoryDifferenceMegabytes:F1} MB";
-
             Status = $"Chart loaded in {initialMeasurement.ElapsedMilliseconds:F0} ms. Starting interaction tests...";
             await chartHost.WaitForRenderFrameAsync(cancellationToken);
-
             await chartHost.WaitForRenderFrameAsync(cancellationToken);
             double trackballMilliseconds = await chartHost.MeasureTrackballAsync(cancellationToken);
-
             double panMilliseconds = await RunPanBenchmarkAsync(cancellationToken);
 
             // The WPF sample clears its frame history before Zoom.
             // Therefore MAUI UI Response also represents Zoom timing.
             chartHost.BeginFrameCollection();
-
             double zoomMilliseconds = await RunZoomBenchmarkAsync(cancellationToken);
-
             FrameMeasurement frameMeasurement = chartHost.EndFrameCollection();
-
             RealTimeMeasurement realTimeMeasurement = await RunRealTimeBenchmarkAsync(cancellationToken);
-
             TrackballResult = trackballMilliseconds > 0 ? $"{trackballMilliseconds:F2} ms" : "Not available";
-
             PanResult = $"{panMilliseconds:F0} ms";
-
             ZoomResult = $"{zoomMilliseconds:F0} ms";
-
             UiResponseResult = frameMeasurement.FrameCount > 0 ? $"{frameMeasurement.AverageFrameMilliseconds:F2} ms/frame" : "Not available";
-
             UpdatesPerSecondResult = $"{realTimeMeasurement.UpdatesPerSecond:F2}";
-
             RealTimeDurationResult = $"{realTimeMeasurement.DurationSeconds:F2} sec";
-
             Status = "Benchmark completed.";
         }
         catch (OperationCanceledException)
@@ -301,7 +274,6 @@ public sealed class BenchmarkViewModel : INotifyPropertyChanged
             }
 
             currentSource.Dispose();
-
             IsBenchmarkRunning = false;
         }
     }
@@ -317,33 +289,23 @@ public sealed class BenchmarkViewModel : INotifyPropertyChanged
         }
 
         const double zoomFactor = 0.20;
-
         chartHost.ResetChart();
-
         await chartHost.WaitForRenderFrameAsync(cancellationToken);
-
         Stopwatch stopwatch = Stopwatch.StartNew();
 
         for (int index = 0; index < PanStepCount; index++)
         {
             cancellationToken.ThrowIfCancellationRequested();
-
             double zoomPosition = index / (double)PanStepCount * (1.0 - zoomFactor);
-
             await chartHost.ApplyPanAsync(zoomFactor, zoomPosition, cancellationToken);
-
             // Wait for one presentation frame after each Pan operation.
             await chartHost.WaitForRenderFrameAsync(cancellationToken);
         }
 
         stopwatch.Stop();
-
         double totalPanMilliseconds = stopwatch.Elapsed.TotalMilliseconds;
-
         chartHost.ResetChart();
-
         await chartHost.WaitForRenderFrameAsync(cancellationToken);
-
         return totalPanMilliseconds;
     }
 
@@ -358,7 +320,6 @@ public sealed class BenchmarkViewModel : INotifyPropertyChanged
         }
 
         chartHost.ResetChart();
-
         await chartHost.WaitForRenderFrameAsync(cancellationToken);
 
         Stopwatch stopwatch = Stopwatch.StartNew();
@@ -366,22 +327,15 @@ public sealed class BenchmarkViewModel : INotifyPropertyChanged
         for (int index = 0; index < ZoomCycleCount; index++)
         {
             cancellationToken.ThrowIfCancellationRequested();
-
             await RunZoomStepAsync(0.10, index * 0.15, cancellationToken);
-
             await RunZoomStepAsync(0.02, index * 0.15, cancellationToken);
-
             await RunZoomStepAsync(1.00, 0, cancellationToken);
         }
 
         stopwatch.Stop();
-
         double totalZoomMilliseconds = stopwatch.Elapsed.TotalMilliseconds;
-
         chartHost.ResetChart();
-
         await chartHost.WaitForRenderFrameAsync(cancellationToken);
-
         return totalZoomMilliseconds;
     }
 
@@ -396,9 +350,7 @@ public sealed class BenchmarkViewModel : INotifyPropertyChanged
         }
 
         cancellationToken.ThrowIfCancellationRequested();
-
         await chartHost.ApplyZoomAsync(zoomFactor, zoomPosition, cancellationToken);
-
         await chartHost.WaitForRenderFrameAsync(cancellationToken);
     }
 
@@ -408,20 +360,16 @@ public sealed class BenchmarkViewModel : INotifyPropertyChanged
     private void GenerateDataset()
     {
         ClearDataset();
-
         // Reset the seed so repeated runs use equivalent data.
         random = new Random(7);
 
         for (int seriesIndex = 0; seriesIndex < SeriesCount; seriesIndex++)
         {
             ObservableCollection<Model> collection = new();
-
             double yValue = random.NextDouble() * 10.0;
-
             for (int pointIndex = 0; pointIndex < SelectedDataCount; pointIndex++)
             {
                 collection.Add(new Model(pointIndex, yValue));
-
                 yValue += random.NextDouble() > 0.5 ? random.NextDouble() : -random.NextDouble();
             }
 
@@ -429,7 +377,6 @@ public sealed class BenchmarkViewModel : INotifyPropertyChanged
         }
 
         currentXValue = SelectedDataCount;
-
         UpdateDatasetInformation();
     }
 
@@ -439,24 +386,17 @@ public sealed class BenchmarkViewModel : INotifyPropertyChanged
     private async Task<RealTimeMeasurement> RunRealTimeBenchmarkAsync(CancellationToken cancellationToken)
     {
         UpdateCount = 0;
-
         Stopwatch stopwatch = Stopwatch.StartNew();
-
         while (stopwatch.ElapsedMilliseconds < RealTimeDurationMilliseconds)
         {
             cancellationToken.ThrowIfCancellationRequested();
-
             UpdateAllSeries();
-
             UpdateCount++;
-
             await Task.Delay(RealTimeIntervalMilliseconds, cancellationToken);
         }
 
         stopwatch.Stop();
-
         double durationSeconds = stopwatch.Elapsed.TotalSeconds;
-
         return new RealTimeMeasurement
         {
             DurationSeconds = durationSeconds,
@@ -477,11 +417,8 @@ public sealed class BenchmarkViewModel : INotifyPropertyChanged
             }
 
             series.RemoveAt(0);
-
             double previousValue = series.Count > 0 ? series[^1].YValue : 50;
-
             double change = random.NextDouble() > 0.5 ? random.NextDouble() : -random.NextDouble();
-
             series.Add(new Model(currentXValue, previousValue + change));
         }
 
@@ -494,12 +431,9 @@ public sealed class BenchmarkViewModel : INotifyPropertyChanged
     private void Clear()
     {
         cancellationSource?.Cancel();
-
         chartHost?.ClearChart();
-
         ClearDataset();
         ResetMetrics();
-
         currentXValue = 0;
         UpdateCount = 0;
 
@@ -582,7 +516,6 @@ public sealed class BenchmarkViewModel : INotifyPropertyChanged
     private sealed class RealTimeMeasurement
     {
         public double UpdatesPerSecond { get; init; }
-
         public double DurationSeconds { get; init; }
     }
 }

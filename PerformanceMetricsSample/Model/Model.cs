@@ -21,7 +21,6 @@ public sealed class Model
     /// Gets or sets the horizontal-axis value.
     /// </summary>
     public double XValue { get; set; }
-
     /// <summary>
     /// Gets or sets the vertical-axis value.
     /// </summary>
@@ -37,22 +36,18 @@ public sealed class InitialRenderMeasurement
     /// Gets the complete initial-render duration in milliseconds.
     /// </summary>
     public double ElapsedMilliseconds { get; init; }
-
     /// <summary>
     /// Gets the managed-memory value before assigning the chart data.
     /// </summary>
     public long MemoryBeforeBytes { get; init; }
-
     /// <summary>
     /// Gets the managed-memory value after chart rendering completes.
     /// </summary>
     public long MemoryAfterBytes { get; init; }
-
     /// <summary>
     /// Gets the positive managed-memory difference in bytes.
     /// </summary>
     public long MemoryDifferenceBytes => Math.Max(0, MemoryAfterBytes - MemoryBeforeBytes);
-
     /// <summary>
     /// Gets the managed-memory difference in megabytes.
     /// </summary>
@@ -68,12 +63,10 @@ public sealed class FrameMeasurement
     /// Gets the number of valid frame intervals collected.
     /// </summary>
     public int FrameCount { get; init; }
-
     /// <summary>
     /// Gets the sum of all collected frame intervals.
     /// </summary>
     public double TotalDurationMilliseconds { get; init; }
-
     /// <summary>
     /// Gets the average interval between consecutive rendering frames.
     /// </summary>

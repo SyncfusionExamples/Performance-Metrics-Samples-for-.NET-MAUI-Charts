@@ -31,17 +31,14 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
     /// Number of FastLineSeriesExt instances declared in MainPage.xaml.
     /// </summary>
     private const int RequiredSeriesCount = 10;
-
     /// <summary>
     /// Maximum time allowed for all ten series to report rendering completion.
     /// </summary>
     private const int RenderTimeoutMilliseconds = 30000;
-
     /// <summary>
     /// Maximum time allowed for the TrackballCreated event.
     /// </summary>
     private const int TrackballTimeoutMilliseconds = 5000;
-
     /// <summary>
     /// Stores each unique series that completed DrawSeries.
     /// </summary>
@@ -50,42 +47,34 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
     /// when DrawSeries is called repeatedly.
     /// </remarks>
     private readonly HashSet<FastLineSeriesExt> renderedSeries = new();
-
     /// <summary>
     /// Stores intervals between consecutive platform display frames.
     /// </summary>
     private readonly List<double> frameTimes = new();
-
     /// <summary>
     /// Synchronizes access to frameTimes.
     /// </summary>
     private readonly object frameLock = new();
-
     /// <summary>
     /// Completes when all expected series finish their initial drawing operation.
     /// </summary>
     private TaskCompletionSource<bool>? initialRenderCompletionSource;
-
     /// <summary>
     /// Completes when the chart raises TrackballCreated.
     /// </summary>
     private TaskCompletionSource<bool>? trackballCompletionSource;
-
     /// <summary>
     /// Number of series expected in the active initial-render benchmark.
     /// </summary>
     private int expectedSeriesCount;
-
     /// <summary>
     /// Number of points expected in each series.
     /// </summary>
     private int expectedPointCountPerSeries;
-
     /// <summary>
     /// Indicates whether continuous frame collection is active.
     /// </summary>
     private bool isFrameCollectionActive;
-
     /// <summary>
     /// Empty data source used when clearing all chart series.
     /// </summary>
@@ -187,9 +176,7 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
 
         // Initial-render timing starts immediately before assigning data.
         Stopwatch stopwatch = Stopwatch.StartNew();
-
         AssignSeriesItemsSources(datasets);
-
         bool rendered = await WaitForInitialRenderCompletionAsync(cancellationToken);
 
         if (!rendered)
@@ -201,9 +188,7 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
 
         // Allow the DrawSeries output to reach the next presentation frame.
         await WaitForRenderFrameAsync(cancellationToken);
-
         stopwatch.Stop();
-
         long memoryAfter = GC.GetTotalMemory(true);
 
         return new InitialRenderMeasurement
@@ -229,7 +214,6 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
         }
 
         List<Model> points = source.ToList();
-
         if (points.Count == 0)
         {
             return 0;
@@ -252,14 +236,10 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
         }
 
         trackballCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-
         Stopwatch stopwatch = Stopwatch.StartNew();
-
         // Programmatic display excludes human reaction time.
         trackballBehavior.Show(xPosition, yPosition);
-
         bool created = await WaitForTrackballCompletionAsync(cancellationToken);
-
         if (created)
         {
             // Wait until trackball visuals reach the next frame.
@@ -296,10 +276,8 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
 
         double factor = Math.Clamp(zoomFactor, 0.001, 1.0);
         double maximumPosition = 1.0 - factor;
-
         xAxis.ZoomFactor = factor;
         xAxis.ZoomPosition = Math.Clamp(zoomPosition, 0, maximumPosition);
-
         return Task.CompletedTask;
     }
 
@@ -319,7 +297,6 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
 
         xAxis.ZoomFactor = factor;
         xAxis.ZoomPosition = Math.Clamp(zoomPosition, 0, maximumPosition);
-
         yAxis.ZoomFactor = factor;
         yAxis.ZoomPosition = 0;
 
@@ -347,7 +324,6 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
 
 #if ANDROID
         androidFrameMonitor = new AndroidContinuousFrameCallback(this);
-
         Choreographer.Instance?.PostFrameCallback(androidFrameMonitor);
 
 #elif WINDOWS
@@ -358,9 +334,7 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
 
 #elif IOS || MACCATALYST
         previousAppleFrameTimestamp = null;
-
         appleFrameDisplayLink = CADisplayLink.Create(OnAppleDisplayFrame);
-
         appleFrameDisplayLink.AddToRunLoop(NSRunLoop.Main, NSRunLoopMode.Common);
 #endif
     }
@@ -494,15 +468,10 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
         }
 
         Task timeout = Task.Delay(RenderTimeoutMilliseconds,cancellationToken);
-
         Task completed = await Task.WhenAny(source.Task, timeout);
-
         cancellationToken.ThrowIfCancellationRequested();
-
         bool rendered = completed == source.Task;
-
         initialRenderCompletionSource = null;
-
         return rendered;
     }
 
@@ -519,15 +488,10 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
         }
 
         Task timeout = Task.Delay(TrackballTimeoutMilliseconds, cancellationToken);
-
         Task completed = await Task.WhenAny(source.Task, timeout);
-
         cancellationToken.ThrowIfCancellationRequested();
-
         bool created = completed == source.Task;
-
         trackballCompletionSource = null;
-
         return created;
     }
 
@@ -539,36 +503,28 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
         cancellationToken.ThrowIfCancellationRequested();
 
 #if ANDROID
-        TaskCompletionSource<bool> source = new(
-            TaskCreationOptions.RunContinuationsAsynchronously);
-
+        TaskCompletionSource<bool> source = new(TaskCreationOptions.RunContinuationsAsynchronously);
         CancellationTokenRegistration registration = cancellationToken.Register(() => source.TrySetCanceled(cancellationToken));
-
         AndroidSingleFrameCallback callback = new(source, registration);
-
         Choreographer.Instance?.PostFrameCallback(callback);
 
         return source.Task;
 
 #elif WINDOWS
         TaskCompletionSource<bool> source = new(TaskCreationOptions.RunContinuationsAsynchronously);
-
         EventHandler<object>? handler = null;
         CancellationTokenRegistration registration = default;
 
         handler = (sender, arguments) =>
         {
             CompositionTarget.Rendering -= handler;
-
             registration.Dispose();
-
             source.TrySetResult(true);
         };
 
         registration = cancellationToken.Register(() =>
         {
             CompositionTarget.Rendering -= handler;
-
             source.TrySetCanceled(cancellationToken);
         });
 
@@ -586,11 +542,8 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
         {
             displayLink?.Invalidate();
             displayLink?.Dispose();
-
             displayLink = null;
-
             registration.Dispose();
-
             source.TrySetResult(true);
         });
 
@@ -600,7 +553,6 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
             {
                 displayLink?.Invalidate();
                 displayLink?.Dispose();
-
                 displayLink = null;
 
                 source.TrySetCanceled(cancellationToken);
@@ -608,17 +560,13 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
         });
 
         displayLink.AddToRunLoop(NSRunLoop.Main, NSRunLoopMode.Common);
-
         return source.Task;
 
 #else
         TaskCompletionSource<bool> source = new(TaskCreationOptions.RunContinuationsAsynchronously);
-
         CancellationTokenRegistration registration = cancellationToken.Register(() => source.TrySetCanceled(cancellationToken));
-
         Dispatcher.DispatchDelayed(TimeSpan.FromMilliseconds(16),
             () => {registration.Dispose();
-
                 source.TrySetResult(true);
             });
 
@@ -637,14 +585,12 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
         if (androidFrameMonitor != null)
         {
             Choreographer.Instance?.RemoveFrameCallback(androidFrameMonitor);
-
             androidFrameMonitor = null;
         }
 #elif WINDOWS
         if (windowsRenderingHandler != null)
         {
             CompositionTarget.Rendering -= windowsRenderingHandler;
-
             windowsRenderingHandler = null;
         }
 
@@ -655,7 +601,6 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
         {
             appleFrameDisplayLink.Invalidate();
             appleFrameDisplayLink.Dispose();
-
             appleFrameDisplayLink = null;
         }
 
@@ -684,7 +629,6 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
         if (previousWindowsRenderingTime.HasValue)
         {
             double milliseconds = (currentTime - previousWindowsRenderingTime.Value).TotalMilliseconds;
-
             AddFrameTime(milliseconds);
         }
 
@@ -710,7 +654,6 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
         if (previousAppleFrameTimestamp.HasValue)
         {
             double milliseconds = (currentTimestamp - previousAppleFrameTimestamp.Value) * 1000.0;
-
             AddFrameTime(milliseconds);
         }
 
@@ -731,7 +674,6 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
         lock (frameLock)
         {
             frameTimes.Add(milliseconds);
-
             if (frameTimes.Count > 1000)
             {
                 frameTimes.RemoveAt(0);
@@ -750,7 +692,6 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
         }
 
         renderedSeries.Add(series);
-
         if (renderedSeries.Count >= expectedSeriesCount)
         {
             initialRenderCompletionSource.TrySetResult(true);
@@ -786,9 +727,7 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
     {
         StopFrameCollection();
         CancelPendingOperations();
-
         trackballBehavior.Hide();
-
         base.OnDisappearing();
     }
 
@@ -838,7 +777,6 @@ public partial class MainPage : ContentPage, IChartBenchmarkHost
             if (previousFrameTimeNanos.HasValue)
             {
                 double milliseconds = (frameTimeNanos - previousFrameTimeNanos.Value) / 1_000_000.0;
-
                 page.AddFrameTime(milliseconds);
             }
 

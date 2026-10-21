@@ -7,7 +7,7 @@
     Title="Performance Benchmark"
     BackgroundColor="#F7F7F9">
 
-    <ScrollView Orientation="Vertical" VerticalScrollBarVisibility="Default">
+    <ScrollView Orientation="Vertical">
 
         <Grid Padding="10" RowSpacing="12">
             <Grid.BindingContext>
@@ -21,13 +21,7 @@
             </Grid.RowDefinitions>
 
             <!-- Header -->
-            <Border
-                Grid.Row="0"
-                Padding="14"
-                BackgroundColor="#FFF3EE"
-                Stroke="#E5864B"
-                StrokeShape="RoundRectangle 14"
-                StrokeThickness="1">
+            <Border Grid.Row="0" Padding="14" BackgroundColor="#FFF3EE" Stroke="#E5864B" StrokeShape="RoundRectangle 14" StrokeThickness="1">
 
                 <Grid ColumnSpacing="12">
                     <Grid.ColumnDefinitions>
@@ -69,11 +63,11 @@
                     </VerticalStackLayout>
 
                     <!-- Start command -->
-                    <Button Grid.Row="1" Grid.Column="0" Text="Start Benchmarking" BackgroundColor="#E98646" TextColor="White" FontAttributes="Bold" CornerRadius="8" HorizontalOptions="Fill"  Command="{Binding StartBenchmarkCommand}" />
+                    <Button Grid.Row="1" Grid.Column="0" Text="Start Benchmarking" BackgroundColor="#E98646" TextColor="White" FontAttributes="Bold" CornerRadius="8" HorizontalOptions="Fill" Command="{Binding StartBenchmarkCommand}" />
                     <!-- Clear command -->
-                    <Button Grid.Row="1" Grid.Column="1" Text="Clear / Reset"  BackgroundColor="#E8E8EA" TextColor="#333333"  FontAttributes="Bold"  CornerRadius="8" HorizontalOptions="Fill" Command="{Binding ClearCommand}" />
+                    <Button Grid.Row="1" Grid.Column="1" Text="Clear / Reset" BackgroundColor="#E8E8EA" TextColor="#333333" FontAttributes="Bold" CornerRadius="8" HorizontalOptions="Fill" Command="{Binding ClearCommand}" />
                     <!-- Dataset information and status -->
-                    <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"  Padding="11"  BackgroundColor="White" Stroke="#D9DFEA" StrokeShape="RoundRectangle 9" StrokeThickness="1">
+                    <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Padding="11" BackgroundColor="White" Stroke="#D9DFEA" StrokeShape="RoundRectangle 9" StrokeThickness="1">
                         <Grid RowSpacing="8">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
@@ -97,22 +91,18 @@
 
                 <Grid>
                     <chart:SfCartesianChart x:Name="chart" ZIndex="1">
-
                         <!-- X axis -->
                         <chart:SfCartesianChart.XAxes>
                             <chart:NumericalAxis x:Name="xAxis" />
                         </chart:SfCartesianChart.XAxes>
-
                         <!-- Y axis -->
                         <chart:SfCartesianChart.YAxes>
                             <chart:NumericalAxis x:Name="yAxis" />
                         </chart:SfCartesianChart.YAxes>
-
                         <!-- Trackball -->
                         <chart:SfCartesianChart.TrackballBehavior>
                             <chart:ChartTrackballBehavior x:Name="trackballBehavior" DisplayMode="NearestPoint" ShowLabel="True" ShowLine="True"  ShowMarkers="True" />
                         </chart:SfCartesianChart.TrackballBehavior>
-
                         <!-- Zoom and pan -->
                         <chart:SfCartesianChart.ZoomPanBehavior>
                             <chart:ChartZoomPanBehavior x:Name="zoomPanBehavior" EnablePinchZooming="True" EnablePanning="True" ZoomMode="X" />
@@ -169,7 +159,6 @@
                                 <Label Text="{Binding InitialRenderResult}" FontSize="17" FontAttributes="Bold" TextColor="#202124" LineBreakMode="TailTruncation" />
                             </VerticalStackLayout>
                         </Border>
-
                         <!-- Memory usage -->
                         <Border Grid.Row="0" Grid.Column="1" Padding="11" MinimumHeightRequest="76" BackgroundColor="#F7F7F7"  Stroke="#D7D7D7"  StrokeShape="RoundRectangle 10" StrokeThickness="1">
                             <VerticalStackLayout Spacing="5">
@@ -177,7 +166,6 @@
                                 <Label Text="{Binding MemoryResult}" FontSize="17" FontAttributes="Bold" TextColor="#202124" LineBreakMode="TailTruncation" />
                             </VerticalStackLayout>
                         </Border>
-
                         <!-- Trackball response -->
                         <Border Grid.Row="1" Grid.Column="0" Padding="11" MinimumHeightRequest="76"  BackgroundColor="#F4F2FF" Stroke="#D8D1F8" StrokeShape="RoundRectangle 10" StrokeThickness="1">
                             <VerticalStackLayout Spacing="5">
@@ -185,7 +173,6 @@
                                 <Label Text="{Binding TrackballResult}" FontSize="17" FontAttributes="Bold"  TextColor="#202124" LineBreakMode="TailTruncation" />
                             </VerticalStackLayout>
                         </Border>
-
                         <!-- Zoom performance -->
                         <Border Grid.Row="1" Grid.Column="1" Padding="11" MinimumHeightRequest="76" BackgroundColor="#EFF8FF" Stroke="#CAE2F4" StrokeShape="RoundRectangle 10" StrokeThickness="1">
                             <VerticalStackLayout Spacing="5">
@@ -193,7 +180,6 @@
                                 <Label Text="{Binding ZoomResult}" FontSize="17" FontAttributes="Bold" TextColor="#202124" LineBreakMode="TailTruncation" />
                             </VerticalStackLayout>
                         </Border>
-
                         <!-- Pan performance -->
                         <Border Grid.Row="2" Grid.Column="0" Padding="11" MinimumHeightRequest="76" BackgroundColor="#F2FAF4" Stroke="#CAE5D0" StrokeShape="RoundRectangle 10" StrokeThickness="1">
                             <VerticalStackLayout Spacing="5">
@@ -201,7 +187,6 @@
                                 <Label Text="{Binding PanResult}" FontSize="17" FontAttributes="Bold" TextColor="#202124" LineBreakMode="TailTruncation" />
                             </VerticalStackLayout>
                         </Border>
-
                         <!-- UI responsiveness -->
                         <Border Grid.Row="2" Grid.Column="1" Padding="11" MinimumHeightRequest="76" BackgroundColor="#F3F7FC" Stroke="#CEDAE8" StrokeShape="RoundRectangle 10" StrokeThickness="1">
                             <VerticalStackLayout Spacing="5">
@@ -210,7 +195,6 @@
                                 <Label Text="{Binding UiResponseResult}" FontSize="17"  FontAttributes="Bold" TextColor="#202124" LineBreakMode="TailTruncation" />
                             </VerticalStackLayout>
                         </Border>
-
                         <!-- Updates per second -->
                         <Border Grid.Row="3" Grid.Column="0" Padding="11" MinimumHeightRequest="76" BackgroundColor="#FFF9ED" Stroke="#EDDCB6" StrokeShape="RoundRectangle 10" StrokeThickness="1">
                             <VerticalStackLayout Spacing="5">
@@ -218,7 +202,6 @@
                                 <Label Text="{Binding UpdatesPerSecondResult}" FontSize="17" FontAttributes="Bold" TextColor="#202124" LineBreakMode="TailTruncation" />
                             </VerticalStackLayout>
                         </Border>
-
                         <!-- Real-time duration -->
                         <Border Grid.Row="3" Grid.Column="1" Padding="11" MinimumHeightRequest="76" BackgroundColor="#FAF4FB"  Stroke="#E2CFE6" StrokeShape="RoundRectangle 10" StrokeThickness="1">
                             <VerticalStackLayout Spacing="5">
